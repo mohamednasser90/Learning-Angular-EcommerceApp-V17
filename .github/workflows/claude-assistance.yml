@@ -24,15 +24,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Extract question from comment or issue
         id: extract_question
         run: |
@@ -44,25 +35,52 @@ jobs:
           # Remove @claude mention and clean up the question
           QUESTION=$(echo "$CONTENT_BODY" | sed 's/@[Cc]laude//g' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
           echo "question=$QUESTION" >> $GITHUB_OUTPUT
+          echo "Question extracted: $QUESTION"
 
-      - name: Get Claude Response
-        uses: anthropics/claude-code-action@v1
+      - name: Create Claude response comment
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            A user has tagged you for assistance in this Angular project with the following question:
+          script: |
+            const question = `${{ steps.extract_question.outputs.question }}`;
             
-            "${{ steps.extract_question.outputs.question }}"
+            // Simple response for now - you can enhance this with actual AI integration
+            const response = `🤖 **Claude AI Assistant**
             
-            Please provide helpful guidance about:
-            - Angular best practices
-            - TypeScript patterns
-            - Component architecture
-            - Routing solutions
-            - Testing strategies
-            - Performance optimization
+            Thank you for tagging me! I see your question:
+            > ${question}
             
-            Keep responses concise and actionable. Include code examples when helpful.
+            I'm an AI assistant ready to help with your Angular 17 e-commerce project. Here are some ways I can assist:
             
-            Context: This is an Angular 17 e-commerce application project.
+            - **Angular Best Practices**: Component architecture, routing, services
+            - **TypeScript Patterns**: Type safety, interfaces, decorators
+            - **Testing Strategies**: Unit tests, integration tests, e2e tests
+            - **Performance Optimization**: Change detection, lazy loading, bundling
+            - **Code Review**: Security, maintainability, scalability
+            
+            For specific code help, please share:
+            1. Relevant code snippets
+            2. Error messages (if any)
+            3. Expected vs actual behavior
+            
+            *Note: To get more detailed assistance, consider using Claude Code CLI or integrate with Anthropic's API for full AI responses.*`;
+            
+            if (context.eventName === 'issues') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: response
+              });
+            } else {
+              // For comments, reply to the same issue/PR
+              const issueNumber = context.payload.issue?.number || context.payload.pull_request?.number;
+              if (issueNumber) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: response
+                });
+              }
+            }
