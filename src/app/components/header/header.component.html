@@ -24,9 +24,17 @@
           <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link position-relative" href="#" title="Shopping Cart">
             <i class="fas fa-shopping-cart"></i>
-            <span class="badge bg-danger ms-1">0</span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                  *ngIf="(cartCount$ | async) as count; else: noItems">
+              {{ count }}
+            </span>
+            <ng-template #noItems>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                0
+              </span>
+            </ng-template>
           </a>
         </li>
       </ul>

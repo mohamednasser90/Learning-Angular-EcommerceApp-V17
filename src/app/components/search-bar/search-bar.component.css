@@ -1,0 +1,62 @@
+.search-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.input-group {
+  position: relative;
+}
+
+.form-control {
+  border-right: none;
+  padding-right: 45px;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control.searching {
+  border-color: #28a745;
+}
+
+.btn {
+  border-left: none;
+}
+
+.btn-outline-secondary {
+  position: absolute;
+  right: 45px;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  border: none;
+  background: transparent;
+  padding: 0 8px;
+  color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  color: #dc3545;
+  background: transparent;
+}
+
+.btn-primary {
+  padding: 0 12px;
+}
+
+.search-hint {
+  margin-top: 5px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .form-control {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
