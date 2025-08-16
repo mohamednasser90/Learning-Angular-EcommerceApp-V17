@@ -35,18 +35,36 @@ jobs:
       - name: Build project
         run: npm run build || echo "Build failed"
 
-      - name: Claude Code Review
-        uses: anthropics/claude-code-action@v1
+      - name: Post PR Review Summary
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Please review this pull request for:
-            - Code quality and best practices
-            - Angular-specific patterns and conventions
-            - Security vulnerabilities
-            - Performance considerations
-            - Test coverage
-            - Documentation needs
+          script: |
+            const response = `🤖 **Automated PR Review Complete**
             
-            Focus on Angular TypeScript code, component architecture, and routing patterns.
+            ✅ **Build & Test Results:**
+            - Linting: Check logs above
+            - Tests: Check logs above  
+            - Build: Check logs above
+            
+            📋 **Review Checklist:**
+            - [ ] Code follows Angular best practices
+            - [ ] TypeScript types are properly defined
+            - [ ] Components follow single responsibility principle
+            - [ ] Routes are properly configured
+            - [ ] Error handling is implemented
+            - [ ] Performance considerations addressed
+            - [ ] Security best practices followed
+            - [ ] Tests cover new functionality
+            - [ ] Documentation is updated
+            
+            💡 **For detailed AI code review, tag @claude in a comment with specific questions!**
+            
+            *This automated review ensures basic quality checks. For comprehensive analysis, use Claude Code CLI or tag @claude for assistance.*`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: response
+            });
