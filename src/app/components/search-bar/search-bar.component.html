@@ -1,0 +1,26 @@
+<div class="search-container">
+  <div class="input-group">
+    <input type="text" 
+           class="form-control" 
+           placeholder="Search products..." 
+           [(ngModel)]="searchTerm"
+           (input)="onSearchInput()"
+           [class.searching]="isSearching">
+    
+    <button class="btn btn-outline-secondary" 
+            type="button" 
+            *ngIf="isSearching"
+            (click)="clearSearch()"
+            title="Clear search">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <button class="btn btn-primary" type="button">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+  
+  <div class="search-hint" *ngIf="searchTerm.length > 0 && searchTerm.length < 2">
+    <small class="text-muted">Type at least 2 characters to search</small>
+  </div>
+</div>

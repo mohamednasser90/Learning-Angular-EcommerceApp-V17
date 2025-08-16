@@ -1,0 +1,62 @@
+<div class="product-detail-container">
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading product details...</p>
+  </div>
+
+  <div class="product-detail" *ngIf="!loading && product">
+    <button class="back-btn" (click)="goBack()">← Back to Products</button>
+    
+    <div class="product-content">
+      <div class="product-image">
+        <img [src]="product.image" [alt]="product.name">
+      </div>
+      
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        
+        <div class="rating">
+          <span *ngFor="let star of getStarArray()" 
+                class="star" 
+                [class.filled]="star <= product.rating">★</span>
+          <span class="rating-text">({{ product.rating }})</span>
+        </div>
+        
+        <p class="price">${{ product.price }}</p>
+        
+        <p class="description">{{ product.description }}</p>
+        
+        <div class="category">
+          <span class="category-tag">{{ product.category }}</span>
+        </div>
+        
+        <div class="stock-info">
+          <span [class]="product.stock > 0 ? 'in-stock' : 'out-of-stock'">
+            {{ product.stock > 0 ? 'In Stock (' + product.stock + ' available)' : 'Out of Stock' }}
+          </span>
+        </div>
+        
+        <div class="quantity-selector" *ngIf="product.stock > 0">
+          <label>Quantity:</label>
+          <div class="quantity-controls">
+            <button (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+            <span class="quantity">{{ quantity }}</span>
+            <button (click)="increaseQuantity()" [disabled]="quantity >= product.stock">+</button>
+          </div>
+        </div>
+        
+        <button class="add-to-cart-btn" 
+                (click)="addToCart()" 
+                [disabled]="product.stock <= 0">
+          {{ product.stock > 0 ? 'Add to Cart' : 'Out of Stock' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="not-found" *ngIf="!loading && !product">
+    <h2>Product Not Found</h2>
+    <p>The product you're looking for doesn't exist.</p>
+    <button (click)="goBack()">Back to Products</button>
+  </div>
+</div>
